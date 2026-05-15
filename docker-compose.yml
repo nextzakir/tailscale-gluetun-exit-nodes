@@ -1,0 +1,101 @@
+services:
+  nextdns:
+    image: nextdns/nextdns
+    container_name: nextdns
+    command:
+      - run
+      - -listen=:53
+      - -profile=<nextdns_profile_id>
+      - -cache-size=10mb
+    networks:
+      vpnlink:
+        ipv4_address: 172.20.0.2
+    restart: unless-stopped
+
+  sg-gluetun:
+    image: qmcgaw/gluetun
+    container_name: sg-gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    depends_on:
+      - nextdns
+    networks:
+      vpnlink:
+        ipv4_address: 172.20.0.3
+    environment:
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=<wireguard_private_key>
+      - WIREGUARD_ADDRESSES=<wireguard_addresses>
+      - DNS_UPSTREAM_RESOLVER_TYPE=plain
+      - DNS_UPSTREAM_PLAIN_ADDRESSES=172.20.0.2:53
+      - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24,172.20.0.0/16,100.64.0.0/10
+      - SERVER_COUNTRIES=Singapore
+      - TZ=<timezone>
+    restart: unless-stopped
+
+  sg-exit-node:
+    image: tailscale/tailscale
+    container_name: sg-exit-node
+    network_mode: service:sg-gluetun
+    depends_on:
+      - sg-gluetun
+    environment:
+      - TS_HOSTNAME=sg-exit-node
+      - TS_AUTHKEY=<tailscale_auth_key>
+      - TS_EXTRA_ARGS=--advertise-exit-node
+      - TS_STATE_DIR=/var/lib/tailscale
+    volumes:
+      - sg-exit-node-data:/var/lib/tailscale
+    restart: unless-stopped
+
+  ca-gluetun:
+    image: qmcgaw/gluetun
+    container_name: ca-gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    depends_on:
+      - nextdns
+    networks:
+      vpnlink:
+        ipv4_address: 172.20.0.4
+    environment:
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=<wireguard_private_key>
+      - WIREGUARD_ADDRESSES=<wireguard_addresses>
+      - DNS_UPSTREAM_RESOLVER_TYPE=plain
+      - DNS_UPSTREAM_PLAIN_ADDRESSES=172.20.0.2:53
+      - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24,172.20.0.0/16,100.64.0.0/10
+      - SERVER_COUNTRIES=Canada
+      - TZ=<timezone>
+    restart: unless-stopped
+
+  ca-exit-node:
+    image: tailscale/tailscale
+    container_name: ca-exit-node
+    network_mode: service:ca-gluetun
+    depends_on:
+      - ca-gluetun
+    environment:
+      - TS_HOSTNAME=ca-exit-node
+      - TS_AUTHKEY=<tailscale_auth_key>
+      - TS_EXTRA_ARGS=--advertise-exit-node
+      - TS_STATE_DIR=/var/lib/tailscale
+    volumes:
+      - ca-exit-node-data:/var/lib/tailscale
+    restart: unless-stopped
+
+volumes:
+  sg-exit-node-data:
+    external: true
+  ca-exit-node-data:
+    external: true
+
+networks:
+  vpnlink:
+    external: true
