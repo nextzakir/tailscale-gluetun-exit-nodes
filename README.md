@@ -6,7 +6,7 @@ Run multiple country-based Tailscale exit nodes, each tunneled through a VPN pro
 
 ![Architecture diagram](architecture.svg)
 
-Each country gets its own Gluetun instance with a dedicated WireGuard configuration. The Tailscale exit node container shares Gluetun's network namespace, so all its traffic goes through the VPN tunnel provided by Gluetun. The diagram shows two example exit nodes (sg / ca) that route through country-specific ProtonVPN WireGuard tunnels and use NextDNS as a shared resolver.
+Each country gets its own Gluetun instance with a dedicated WireGuard configuration. The Tailscale exit node container shares Gluetun's network namespace, so all its traffic goes through the VPN tunnel provided by Gluetun. The diagram shows an example exit node (sg) that routes through country-specific ProtonVPN WireGuard tunnel and use NextDNS as a shared resolver.
 
 ## Prerequisites
 
