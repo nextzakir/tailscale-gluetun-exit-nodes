@@ -1,18 +1,12 @@
 # Tailscale VPN Exit Nodes via Gluetun
 
-Run multiple country-based Tailscale exit nodes, each tunneled through a VPN provider via Gluetun, with a shared DNS resolver handling DNS for all nodes. The example uses ProtonVPN with NextDNS, but Gluetun supports [many other providers](https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers) and any DNS resolver can be used in place of NextDNS.
+Run multiple country-based Tailscale exit nodes, each tunneled through a VPN provider via Gluetun, with a shared DNS resolver handling DNS for all nodes. The example uses ProtonVPN with NextDNS, but you can replace those with any provider/resolver supported by Gluetun.
 
 ## Architecture
 
-```
-Tailscale client
-    └── selects exit node (e.g. sg-exit-node)
-            └── sg-exit-node container (network_mode: service:sg-gluetun)
-                    └── sg-gluetun (WireGuard tunnel to ProtonVPN Singapore)
-                            └── nextdns (shared DNS for all Gluetun instances)
-```
+![Architecture diagram](architecture.svg)
 
-Each country gets its own Gluetun instance with a dedicated WireGuard configuration. The Tailscale exit node container shares Gluetun's network namespace, so all its traffic goes through the VPN tunnel.
+Each country gets its own Gluetun instance with a dedicated WireGuard configuration. The Tailscale exit node container shares Gluetun's network namespace, so all its traffic goes through the VPN tunnel provided by Gluetun. The diagram shows two example exit nodes (sg / ca) that route through country-specific ProtonVPN WireGuard tunnels and use NextDNS as a shared resolver.
 
 ## Prerequisites
 
@@ -68,7 +62,7 @@ docker compose up -d nextdns sg-gluetun sg-exit-node
 
 ## Adding more countries
 
-Copy any `*-gluetun` + `*-exit-node` service block, update the country name, assign a new static IP (helps Tailscale establishing direct connections) in the `vpnlink` subnet, create a volume for it, and add it to the `volumes` section.
+Copy any `*-gluetun` + `*-exit-node` service block, update the country name, assign a new static IP (helps Tailscale establishing direct connections) in the `vpnlink` subnet, create a volume for it, and update placeholders.
 
 ## Notes
 
