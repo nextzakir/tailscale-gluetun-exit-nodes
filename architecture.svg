@@ -1,71 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520" role="img" aria-label="Architecture diagram: Tailscale client to single sg exit node to gluetun to ProtonVPN and NextDNS">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-label="Architecture diagram: Tailscale client to sg exit node to sg gluetun to ProtonVPN and NextDNS">
   <defs>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.12"/>
     </filter>
-    <style>
-      .title { font: 700 18px/1.2 'Segoe UI', Roboto, Arial; fill: #0b4870 }
-      .label { font: 600 13px/1.2 'Segoe UI', Roboto, Arial; fill: #073049 }
-      .small { font: 400 12px/1.2 'Segoe UI', Roboto, Arial; fill: #073049 }
-      .box { rx:10; ry:10; filter:url(#shadow) }
-      .arrow { stroke: #2b2b2b; stroke-width:2.5; fill: none; marker-end: url(#arrowhead) }
-    </style>
-    <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+    <marker id="a" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
       <path d="M0,0 L10,4 L0,8 z" fill="#2b2b2b" />
     </marker>
+    <style>
+      .title { font: 700 20px/1.2 'Segoe UI', Roboto, Arial; fill: #0b4870 }
+      .label { font: 700 14px/1.2 'Segoe UI', Roboto, Arial; fill: #073049 }
+      .muted { font: 400 12px/1.2 'Segoe UI', Roboto, Arial; fill: #073049 }
+      .box { rx:12; ry:12; filter:url(#s) }
+      .arrow { stroke: #2b2b2b; stroke-width:2.5; fill: none; marker-end: url(#a); stroke-linecap:round; stroke-linejoin:round }
+    </style>
   </defs>
 
   <rect width="100%" height="100%" fill="#ffffff" />
-  <text x="30" y="30" class="title">Architecture — Tailscale Exit Node (single-country example: sg)</text>
+  <text x="40" y="34" class="title">Architecture — Tailscale Exit Nodes via Gluetun</text>
 
   <!-- Tailscale Client -->
   <g transform="translate(40,70)">
-    <rect width="220" height="64" class="box" fill="#E8F5FF" stroke="#66B2FF" stroke-width="2"/>
-    <text x="16" y="36" class="label">Tailscale Client</text>
-    <text x="16" y="52" class="small">Selects advertised exit node (sg)</text>
+    <rect width="220" height="72" class="box" fill="#E8F5FF" stroke="#66B2FF" stroke-width="2"/>
+    <text x="18" y="40" class="label">Tailscale Client</text>
+    <text x="18" y="58" class="muted">Selects advertised exit node</text>
   </g>
 
   <!-- SG Exit Node -->
-  <g transform="translate(320,60)">
-    <rect width="260" height="72" class="box" fill="#F0FFF4" stroke="#39B54A" stroke-width="2"/>
-    <text x="16" y="40" class="label">sg-exit-node (Tailscale)</text>
-    <text x="16" y="58" class="small">network_mode: service:sg-gluetun</text>
+  <g transform="translate(320,52)">
+    <rect x="0" y="16" width="240" height="72" class="box" fill="#F0FFF4" stroke="#39B54A" stroke-width="2"/>
+    <text x="18" y="44" class="label">sg-exit-node (Tailscale)</text>
+    <text x="18" y="62" class="muted">network_mode: service:sg-gluetun</text>
   </g>
 
-  <!-- Arrow Tailscale -> Exit -->
-  <path d="M260 102 L320 102" class="arrow" />
-
-  <!-- SG Gluetun -->
-  <g transform="translate(640,60)">
-    <rect width="280" height="72" class="box" fill="#FFF8E6" stroke="#FF9F1C" stroke-width="2"/>
-    <text x="16" y="40" class="label">sg-gluetun (Gluetun)</text>
-    <text x="16" y="58" class="small">WireGuard → ProtonVPN (Singapore)</text>
+  <!-- sg-gluetun -->
+  <g transform="translate(620,52)">
+    <rect x="0" y="16" width="260" height="72" class="box" fill="#FFF8E6" stroke="#FF9F1C" stroke-width="2"/>
+    <text x="18" y="44" class="label">sg-gluetun (Gluetun)</text>
+    <text x="18" y="62" class="muted">WireGuard → ProtonVPN (Singapore)</text>
   </g>
 
-  <!-- Arrow Exit -> Gluetun -->
-  <path d="M580 96 L640 96" class="arrow" />
-
-  <!-- ProtonVPN cloud -->
-  <g transform="translate(640,170)">
-    <ellipse cx="140" cy="48" rx="120" ry="44" fill="#F7E9FF" stroke="#9B59FF" stroke-width="2" />
-    <text x="78" y="54" class="label">ProtonVPN</text>
-    <text x="60" y="72" class="small">WireGuard tunnel (Singapore)</text>
+  <!-- ProtonVPN -->
+  <g transform="translate(960,40)">
+    <ellipse cx="80" cy="44" rx="88" ry="42" fill="#F7E9FF" stroke="#9B59FF" stroke-width="2" />
+    <text x="40" y="48" class="label">ProtonVPN</text>
+    <text x="20" y="66" class="muted">WireGuard tunnel (country-specific)</text>
   </g>
 
-  <!-- Arrow Gluetun -> ProtonVPN -->
-  <path d="M780 96 L780 170" class="arrow" />
-
-  <!-- NextDNS resolver -->
-  <g transform="translate(240,260)">
-    <rect width="360" height="80" class="box" fill="#E9FFF7" stroke="#00B3A6" stroke-width="2"/>
-    <text x="18" y="40" class="label">NextDNS (shared DNS resolver)</text>
-    <text x="18" y="58" class="small">All Gluetun instances can point to this resolver (example: 172.20.0.2:53)</text>
+  <!-- NextDNS (shared) -->
+  <g transform="translate(420,240)">
+    <rect width="340" height="86" class="box" fill="#E9FFF7" stroke="#00B3A6" stroke-width="2"/>
+    <text x="18" y="36" class="label">NextDNS (shared DNS resolver)</text>
+    <!-- Wrapped description using tspans to avoid overflow -->
+    <text x="18" y="56" class="muted">
+      <tspan x="18" dy="0">All Gluetun instances point to this resolver</tspan>
+      <tspan x="18" dy="18">(e.g. 172.20.0.2:53)</tspan>
+    </text>
   </g>
 
-  <!-- Arrow NextDNS relation -->
-  <path d="M460 240 L740 140" class="arrow" />
+  <!-- Arrows: Tailscale -> sg-exit-node (curved to avoid overlap) -->
+  <path class="arrow" d="M260 106 C 300 106, 320 106, 320 106" />
 
-  <text x="30" y="380" class="small">Note: The repository still contains multiple country service blocks in docker-compose as examples. This diagram shows a simplified single-country (sg) flow for clarity.</text>
+  <!-- sg-exit-node -> sg-gluetun (stepped path) -->
+  <path class="arrow" d="M560 80 L590 80 L590 88 L620 88" />
+
+  <!-- sg-gluetun -> ProtonVPN (curved) -->
+  <path class="arrow" d="M880 88 C 910 88, 940 64, 960 64" />
+
+  <!-- NextDNS vertical connectors to sg-gluetun -->
+  <path class="arrow" d="M540 240 L540 192" />
+  <path class="arrow" d="M740 240 L740 192" />
+
+  <text x="40" y="360" class="muted">Note: Diagram shows a single example exit node (sg). The compose file may include multiple country services; each country runs its own Gluetun WireGuard tunnel and the Tailscale exit node shares Gluetun's network namespace.</text>
 
 </svg>
