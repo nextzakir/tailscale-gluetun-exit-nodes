@@ -1,17 +1,4 @@
 services:
-  nextdns:
-    image: nextdns/nextdns
-    container_name: nextdns
-    command:
-      - run
-      - -listen=:53
-      - -profile=<nextdns_profile_id>
-      - -cache-size=10mb
-    networks:
-      vpnlink:
-        ipv4_address: 172.20.0.2
-    restart: unless-stopped
-
   sg-gluetun:
     image: qmcgaw/gluetun
     container_name: sg-gluetun
@@ -19,18 +6,15 @@ services:
       - NET_ADMIN
     devices:
       - /dev/net/tun:/dev/net/tun
-    depends_on:
-      - nextdns
     networks:
       vpnlink:
-        ipv4_address: 172.20.0.3
+        ipv4_address: 172.20.0.2
     environment:
       - VPN_SERVICE_PROVIDER=protonvpn
       - VPN_TYPE=wireguard
       - WIREGUARD_PRIVATE_KEY=<wireguard_private_key>
       - WIREGUARD_ADDRESSES=<wireguard_addresses>
-      - DNS_UPSTREAM_RESOLVER_TYPE=plain
-      - DNS_UPSTREAM_PLAIN_ADDRESSES=172.20.0.2:53
+      - DNS_ADDRESS=100.100.100.100
       - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24,172.20.0.0/16,100.64.0.0/10
       - SERVER_COUNTRIES=Singapore
       - TZ=<timezone>
@@ -58,18 +42,15 @@ services:
       - NET_ADMIN
     devices:
       - /dev/net/tun:/dev/net/tun
-    depends_on:
-      - nextdns
     networks:
       vpnlink:
-        ipv4_address: 172.20.0.4
+        ipv4_address: 172.20.0.3
     environment:
       - VPN_SERVICE_PROVIDER=protonvpn
       - VPN_TYPE=wireguard
       - WIREGUARD_PRIVATE_KEY=<wireguard_private_key>
       - WIREGUARD_ADDRESSES=<wireguard_addresses>
-      - DNS_UPSTREAM_RESOLVER_TYPE=plain
-      - DNS_UPSTREAM_PLAIN_ADDRESSES=172.20.0.2:53
+      - DNS_ADDRESS=100.100.100.100
       - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24,172.20.0.0/16,100.64.0.0/10
       - SERVER_COUNTRIES=Canada
       - TZ=<timezone>
