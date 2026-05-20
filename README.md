@@ -2,11 +2,24 @@
 
 Run multiple country-based Tailscale exit nodes, each tunneled through a VPN provider via Gluetun. The example uses ProtonVPN, but you can replace it with any provider supported by Gluetun.
 
-## Architecture
+## How this works
 
 ![Architecture diagram](architecture.svg)
 
 Each country gets its own Gluetun instance with a dedicated WireGuard configuration. The Tailscale exit node container shares Gluetun's network namespace, so all its traffic goes through the VPN tunnel. All Gluetun instances are attached to a shared `vpnlink` network with static IPs — this helps Tailscale establish direct connections.
+
+## Why this works
+
+Gluetun and Tailscale share the same Docker network namespace.
+
+Tailscale exposes its internal DNS resolver at `100.100.100.100`
+inside that shared namespace.
+
+Gluetun forwards DNS queries directly to that resolver:
+
+```yaml
+DNS_ADDRESS=100.100.100.100
+```
 
 ## Prerequisites
 
