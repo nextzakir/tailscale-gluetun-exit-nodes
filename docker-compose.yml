@@ -17,7 +17,6 @@ services:
       - DNS_ADDRESS=100.100.100.100
       - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24,172.20.0.0/16,100.64.0.0/10
       - SERVER_COUNTRIES=Singapore
-      - UPDATER_PERIOD=12h
       - TZ=<timezone>
     restart: unless-stopped
 
@@ -54,7 +53,6 @@ services:
       - DNS_ADDRESS=100.100.100.100
       - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24,172.20.0.0/16,100.64.0.0/10
       - SERVER_COUNTRIES=Canada
-      - UPDATER_PERIOD=12h
       - TZ=<timezone>
     restart: unless-stopped
 
