@@ -16,6 +16,7 @@ services:
       - WIREGUARD_ADDRESSES=<wireguard_addresses>
       - DNS_ADDRESS=100.100.100.100
       - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24,172.20.0.0/16,100.64.0.0/10
+      - UPDATER_PERIOD=12h
       - SERVER_COUNTRIES=Singapore
       - TZ=<timezone>
     restart: unless-stopped
@@ -52,6 +53,7 @@ services:
       - WIREGUARD_ADDRESSES=<wireguard_addresses>
       - DNS_ADDRESS=100.100.100.100
       - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24,172.20.0.0/16,100.64.0.0/10
+      - UPDATER_PERIOD=12h
       - SERVER_COUNTRIES=Canada
       - TZ=<timezone>
     restart: unless-stopped
